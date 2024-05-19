@@ -1,13 +1,25 @@
 import os
 from dotenv import load_dotenv
+import redis
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Access the environment variables
-openai_api_key = os.getenv('OPENAI_API_KEY')
+# Debugging: Print environment variables
+print("REDIS_URL:", os.getenv('REDIS_URL'))
+print("OPENAI_API_KEY:", os.getenv('OPENAI_API_KEY'))
+
+# Get Redis URL from environment variables
 redis_url = os.getenv('REDIS_URL')
 
-# Now you can use these variables in your code
-print(f"OpenAI API Key: {openai_api_key}")
-print(f"Redis URL: {redis_url}")
+# Connect to Redis server
+r = redis.Redis.from_url(redis_url)
+
+# Test the connection
+try:
+    r.ping()
+    print("Connected to Redis")
+except redis.AuthenticationError as e:
+    print(f"Authentication failed: {e}")
+except redis.ConnectionError as e:
+    print(f"Connection error: {e}")
